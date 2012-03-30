@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>jQuery, BackBone & Data Table</title>
+</head>
+<body>
+<table>
+<tr><td><input id="col1"></td><td><input id="col2"></td><td><input id="col3"></td></tr>
+</table>	
+<button id="add-row">ADD</button>
+
+
+<table id="otable">
+</table>	
+</ul>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+<script src="http://ajax.cdnjs.com/ajax/libs/underscore.js/1.1.4/underscore-min.js"></script>
+<script src="http://ajax.cdnjs.com/ajax/libs/backbone.js/0.3.3/backbone-min.js"></script>
+<script>
+(function ($) {
+  
+  TableRow = Backbone.Model.extend({
+    // Model
+    col1: null,
+	col2: null,
+	col3: null
+  });
+  
+  TableRows = Backbone.Collection.extend({
+      // Collection of Models
+    initialize: function (models, options) {
+      this.bind("add", options.view.addRow);    
+    }
+  });
+  
+  AppView = Backbone.View.extend({
+    el: $("body"),
+    initialize: function () {
+      this.tableRows = new TableRows( null, { view: this });
+    },
+    events: {
+      "click #add-row":  "getRow",
+    },
+    getRow: function () {
+      var v1 = $("#col1").val();
+	  var v2 = $("#col2").val();
+	  var v3 = $("#col3").val();
+      var table_model = new TableRow({col1:v1,
+	  								  col2:v2,
+									  col3:v3});	  
+      
+      this.tableRows.add( table_model );
+    },
+    addRow: function (model) {
+	  htmlStr = "<tr><td>"+ model.get('col1') + "</td>"
+	            +"<td>" + model.get('col2') + "</td>"
+				+"<td>" + model.get('col3') + "</td></tr>";
+	  $("#otable").append(htmlStr);
+	
+    }
+  });
+  
+  var appview = new AppView;
+})(jQuery);
+
+$(document).ready(function(){
+	$('#otable').dataTable();
+});
+</script>
+</body>
+</html>
